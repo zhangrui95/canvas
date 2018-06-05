@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+        }
+        .bg{
+            background: url("img/bg.png");
+            background-position: top center;
+            background-repeat: no-repeat;
+            background-size: 1920px 500px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div style="height: 500px;" class="bg"></div>
+        <canvas id="myCanvas" width="1920" height="500" style="position: absolute;top:0;left: 50%;margin-left: -960px;"></canvas>
+    </div>
+    <script>
+        var cw = 960;
+        function getCanvas() {
+            var canvas = document.querySelector('#myCanvas'),
+                ctx = canvas.getContext('2d');
+            var backDom = document.createElement('canvas'),
+                backCtx = backDom.getContext('2d');
+            backDom.width = canvas.width;
+            backDom.height = canvas.height;
+            ctx.globalAlpha = 0.9; //关键
+
+            function draw(options) {
+                backCtx.globalCompositeOperation = 'copy';
+                backCtx.drawImage(canvas, 0, 0, canvas.width, canvas.height);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.beginPath();
+                ctx.arc(options.x, options.y, options.r, 0, Math.PI * 2, true);
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(1,178,249,1)';
+                ctx.fill();
+                ctx.drawImage( backDom, 0, 0, backDom.width, backDom.height);
+            }
+            var position = {}
+            function getPosition (x,y,r) {
+                position = {x:x,y:y,r:r};
+                return position;
+            }
+            var start = getPosition(cw, 90, 3);
+            var end = getPosition(parseInt(cw + 290), 256, 3);
+            var start1 = getPosition(cw, 90, 3);
+            var end1 = getPosition(parseInt(cw - 290), 256, 3);
+            var start2 = getPosition(cw, 90, 3);
+            var end2 = getPosition(parseInt(cw + 290), 400, 3);
+            function render() {
+                if(start.y === end.y){
+                    getCanvas();
+                }
+                if (start.x < end.x && start.y < end.y) {
+                    draw(start);
+                    start.x += 1.75;
+                    start.y += 1;
+                    setTimeout(arguments.callee, 40);
+                }
+            }
+            function render1() {
+                if (start1.x > end1.x && start1.y < end1.y) {
+                    draw(start1);
+                    start1.x -= 1.75;
+                    start1.y += 1;
+                    setTimeout(arguments.callee, 40);
+                }
+            }
+            function render2() {
+                if (start2.x < end2.x && start2.y < end2.y) {
+                    draw(start2);
+                    start2.x += 0;
+                    start2.y += 1.85;
+                    setTimeout(arguments.callee, 40);
+                }
+            }
+            render();
+            render1();
+            render2();
+        };
+        getCanvas();
+    </script>
+</body>
+</html>
